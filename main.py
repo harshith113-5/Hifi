@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/') 
 def start():
-    return render_template('dashboard.html')
+    return render_template('homepage.html')
 
 @app.route('/login')
 def login():
