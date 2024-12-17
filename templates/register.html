@@ -15,7 +15,7 @@
                 <h5>HiFi Food Delivery</h5>
                 </a>
             </div>
-            <form id="registerForm" class="input-group register-form" action="/verify_data" method="POST">
+            <form id="registerForm" class="input-group register-form" action="{{ url_for('verify_data') }}" method="POST">
                 <input type="text" class="input-field" id="registerUsername" placeholder="Username" name="username" required>
                 <input type="password" class="input-field" id="registerPassword" placeholder="Password" name="password" required>
                 <input type="password" class="input-field" id="registerconfirmPassword" placeholder="Confirm-Password" name="confirm-password" required>
