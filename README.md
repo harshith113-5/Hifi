@@ -5,10 +5,11 @@ This project includes a set of HTML pages for the frontend and a Python script (
 ## Project Structure
 
 - `templates/`: Folder containing the HTML pages.
-  - `dashboard.html`: Main landing page of the website.
+  - `homepage.html`: Main landing page of the website.
   - `register.html`: Sign-up page to collect information from new users.
   - `login.html`: Login page for user authentication.
-  
+  - `contact.html`:contact page for contacting hifi delivery eats
+  - `info.html`: info page for Information for hifi delivery eats.
 - `static/`: Folder containing static files like CSS, JS, and images.
   - `styles.css`: CSS file for styling the HTML pages.
 
