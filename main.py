@@ -1,8 +1,9 @@
 from flask import Flask,redirect,url_for,render_template, request, flash 
+import re
 # from flask_sqlalchemy import SQLAlchemy
 # import pymysql
 
-# # Initialize Flask app, SQLAlchemy
+
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'mysecrethifi'  # Used for session security
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:hello_world67@localhost/hifidb'
@@ -53,8 +54,6 @@ def verify_data():
         email = request.form['email']
         location = request.form['location']
         contact = request.form['contact']
-        if password == confirm_password:
-            return redirect(url_for('register'))
         # print(f"Username: {username}, Email: {email}")  # Check if values are correct
         
         # # Check if user already exists
@@ -70,7 +69,20 @@ def verify_data():
         
         # # Debugging before attempting to add the user
         # print("Attempting to add new user to the database.")
+
+        if len(password) < 6:
+            flash("Password must be at least 6 characters long.", "error")
+            return redirect(url_for('register'))
         
+        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            flash("Invalid email format.", "error")
+            return redirect(url_for('register'))
+        
+        if not re.match(r'^\d{10}$', contact):
+            flash("Contact number must be a valid 10-digit number.", "error")
+            return redirect(url_for('register'))
+
+    
         # # Save new user to the database
         # new_user = User(username=username, email=email, location=location, contact=contact, password=password)
         # try:
@@ -85,20 +97,27 @@ def verify_data():
          
     return redirect(url_for('start'))
 
-
 @app.route('/submit_contact',methods=['GET','POST'])
 def submit_contact():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         message = request.form['message']
+        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            flash("Invalid email format.", "error")
+            return redirect(url_for('register'))
         print(name,email,message,sep='\n')
     return redirect(url_for('start'))
     
-    
+
+
+
 
 
 if __name__ == '__main__':
     # with app.app_context():
     #     db.create_all()  #create tables if they don't exists
     app.run(debug=True)
+
+
+
