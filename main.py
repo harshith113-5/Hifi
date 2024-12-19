@@ -10,7 +10,7 @@ app.config['SECRET_KEY'] = 'mysecrethifi'  # Used for session security
 # # Initialize the database
 # db = SQLAlchemy(app)
 
-print('Hello world')
+print('Hello')
 
 # # Define the User model(defined user table with columns)
 # class User(db.Model):
