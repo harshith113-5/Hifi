@@ -2,15 +2,15 @@ from flask import Flask,redirect,url_for,render_template, request, flash
 import re
 # from flask_sqlalchemy import SQLAlchemy
 # import pymysql
-
-
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'mysecrethifi'  # Used for session security
+app.config['SECRET_KEY'] = 'mysecrethifi'  # Used for session security
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:hello_world67@localhost/hifidb'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # # Initialize the database
 # db = SQLAlchemy(app)
+
+print('Hello world')
 
 # # Define the User model(defined user table with columns)
 # class User(db.Model):
