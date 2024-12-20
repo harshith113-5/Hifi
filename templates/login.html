@@ -131,7 +131,7 @@
 <body>
     <div class="container">
         <h2>Login</h2>
-        <form action="/verify_data" method="POST" onsubmit="return validatePasswords()">
+        <form action="{{ url_for('verify_login_data') }}" method="POST">
             <label for="identifier">Username, Email or Phone Number:</label>
             <input type="text" id="identifier" name="identifier" placeholder="Enter your username, email, or phone number" required>
 
@@ -157,7 +157,7 @@
         </form>
     </div>
 
-    <script>
+    <!-- <script>
         function validatePasswords() {
             const password = document.getElementById('password').value;
             const repassword = document.getElementById('repassword').value;
@@ -168,6 +168,6 @@
             }
             return true;
         }
-    </script>
+    </script> -->
 </body>
 </html>

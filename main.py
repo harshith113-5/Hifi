@@ -122,6 +122,10 @@ def forgot():
 def admin():
     return render_template('admin.html')
 
+@app.route('/delivery')
+def delivery():
+    return render_template('delivery.html')
+
 @app.route('/recovery')
 def recovery():
     return render_template('recovery.html')
@@ -130,16 +134,20 @@ def recovery():
 def profile():
     return render_template('profile.html')
 
+
 @app.route('/verify_data', methods=['GET', 'POST'])
 def verify_data():
     print("Verify data function triggered.")  # Debugging line
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        confirm_password = request.form['confirm-password']
+        repassword = request.form['repassword']
         email = request.form['email']
-        location = request.form['location']
-        contact = request.form['contact']
+        phone = request.form['phone']
+        otp = request.form['otp']
+        print(f'username : {username}\npassword:{password}\nrepassword:{repassword}\nemail:{email}\nphone:{phone}\notp:{otp}')
+
+
         # print(f"Username: {username}, Email: {email}")  # Check if values are correct
         
         # # Check if user already exists
@@ -164,7 +172,7 @@ def verify_data():
             flash("Invalid email format.", "error")
             return redirect(url_for('register'))
         
-        if not re.match(r'^\d{10}$', contact):
+        if not re.match(r'^\d{10}$', phone):
             flash("Contact number must be a valid 10-digit number.", "error")
             return redirect(url_for('register'))
 
@@ -183,16 +191,36 @@ def verify_data():
          
     return redirect(url_for('start'))
 
+
+@app.route('/verify_login_data',methods=['GET','POST'])
+def verify_login_data():
+    choice = 'start'
+    if request.method == 'POST':
+        identifier = request.form['identifier']
+        password = request.form['password']
+        repassword = request.form['repassword']
+        role = request.form['type']
+        print(f'identifier:{identifier}\npassword:{password}\nrepassword:{repassword}\nrole:{role}')
+        if role == 'customer':
+            choice = 'start'
+        elif role == 'admin':
+            choice = 'admin'
+        else:
+            choice = 'delivery'
+    return redirect(url_for(choice))
+            
+        
+
 @app.route('/submit_contact',methods=['GET','POST'])
 def submit_contact():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         message = request.form['message']
+        print(f'name:{name}\nemail:{email}\nmessage:{message}')
         if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
             flash("Invalid email format.", "error")
             return redirect(url_for('register'))
-        print(name,email,message,sep='\n')
     return redirect(url_for('start'))
     
 
@@ -202,6 +230,7 @@ def forgot_password():
         identifier = request.form.get('identifier')
         new_password = request.form.get('new_password')
         re_new_password = request.form.get('re_new_password')
+        print(f'identifier:{identifier}\nnew_password:{new_password}\nre-new-password:{re_new_password}')
 
 
         if new_password != re_new_password:
@@ -214,7 +243,15 @@ def forgot_password():
 
     return render_template(url_for('forgot'))
 
-
+@app.route('/submit_profile', methods=['GET', 'POST'])
+def submit_profile():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        location = request.form['location']
+        print(name,email,phone,location,sep='\n')
+        return redirect(url_for('start'))
 
 if __name__ == '__main__':
     # with app.app_context():

@@ -134,7 +134,7 @@
 <body>
     <div class="container">
         <h2>Register</h2>
-        <form action="/verify_data" method="POST" onsubmit="return validateForm()">
+        <form action="{{ url_for('verify_data') }}" method="POST" onsubmit="return validateForm()">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required pattern="[A-Za-z]+" title="Username should contain only letters">
 
