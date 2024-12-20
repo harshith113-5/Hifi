@@ -1,4 +1,4 @@
-from flask import Flask,redirect,url_for,render_template, request, flash 
+# from flask import Flask,redirect,url_for,render_template, request, flash 
 import re
 import random
 import time
@@ -114,6 +114,22 @@ def info():
 def contact():
     return render_template('contact.html')
 
+@app.route('/forgot')
+def forgot():
+    return render_template('forgot.html')
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+@app.route('/recovery')
+def recovery():
+    return render_template('recovery.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
 @app.route('/verify_data', methods=['GET', 'POST'])
 def verify_data():
     print("Verify data function triggered.")  # Debugging line
@@ -180,7 +196,23 @@ def submit_contact():
     return redirect(url_for('start'))
     
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        identifier = request.form.get('identifier')
+        new_password = request.form.get('new_password')
+        re_new_password = request.form.get('re_new_password')
 
+
+        if new_password != re_new_password:
+            flash('Passwords do not match. Please try again.', 'error')
+            return redirect(url_for('forgot_password'))
+
+
+        flash('Password reset successful. Please log in with your new password.', 'success')
+        return redirect(url_for('start'))
+
+    return render_template(url_for('forgot'))
 
 
 

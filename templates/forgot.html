@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Forgot Password</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -48,7 +48,7 @@
             color: #555555;
         }
 
-        input, select {
+        input {
             padding: 12px;
             margin-bottom: 15px;
             border: 1px solid #cccccc;
@@ -57,7 +57,7 @@
             transition: border-color 0.3s;
         }
 
-        input:focus, select:focus {
+        input:focus {
             border-color: #0056b3;
             box-shadow: 0 0 5px rgba(0, 91, 187, 0.2);
             outline: none;
@@ -84,9 +84,8 @@
         }
 
         .links {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
+            text-align: center;
+            margin-top: 15px;
         }
 
         a {
@@ -111,63 +110,34 @@
                 font-size: 1.5rem;
             }
 
-            input, select, button {
+            input, button {
                 font-size: 0.9rem;
                 padding: 10px;
-            }
-
-            .links {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-
-            a {
-                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Login</h2>
-        <form action="/verify_data" method="POST" onsubmit="return validatePasswords()">
-            <label for="identifier">Username, Email or Phone Number:</label>
-            <input type="text" id="identifier" name="identifier" placeholder="Enter your username, email, or phone number" required>
+        <h2>Forgot Password</h2>
+        <form action="{{ url_for('forgot_password') }}" method="POST" >
+            <label for="identifier">Username or Email:</label>
+            <input type="text" id="identifier" name="identifier" placeholder="Enter your username or email" required>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" pattern="(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}" title="Password must contain at least 8 characters, including letters and numbers" required>
+            <label for="new_password">New Password:</label>
+            <input type="password" id="new_password" name="new_password" placeholder="Enter new password" required pattern="(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}" title="Password must contain at least 8 characters, including letters and numbers">
 
-            <label for="repassword">Re-enter Password:</label>
-            <input type="password" id="repassword" name="repassword" placeholder="Re-enter your password" required>
+            <label for="re_new_password">Re-enter New Password:</label>
+            <input type="password" id="re_new_password" name="re_new_password" placeholder="Re-enter new password" required>
 
-            <label for="type">Type:</label>
-            <select id="type" name="type" required>
-                <option value="admin">Admin</option>
-                <option value="customer">Customer</option>
-                <option value="delivery_agent">Delivery Agent</option>
-            </select>
-
-            <div class="links">
-                <a href="{{ url_for('forgot') }}"><b>Forgot Password?</b></a>
-                <a href="{{ url_for('register') }}"><b>New User? Register</b></a>
-            </div>
-
-            <button type="submit">Login</button>
+            <button type="submit">Reset Password</button>
         </form>
+
+        <div class="links">
+            <a href="{{ url_for('login') }}"><b>Back to Login</b></a>
+        </div>
     </div>
 
-    <script>
-        function validatePasswords() {
-            const password = document.getElementById('password').value;
-            const repassword = document.getElementById('repassword').value;
-
-            if (password !== repassword) {
-                alert('Passwords do not match.');
-                return false;
-            }
-            return true;
-        }
-    </script>
+    
 </body>
 </html>
