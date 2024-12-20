@@ -25,6 +25,7 @@ To run the project, make sure you have the following:
 
   ```bash
   pip install flask
+  pip install Flask Flask-Mail
 
 
 

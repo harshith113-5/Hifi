@@ -1,5 +1,9 @@
 from flask import Flask,redirect,url_for,render_template, request, flash 
 import re
+import random
+import time
+from flask import Flask, request, jsonify, render_template, session, flash, redirect, url_for
+from flask_mail import Mail, Message
 # from flask_sqlalchemy import SQLAlchemy
 # import pymysql
 app = Flask(__name__)
@@ -10,7 +14,6 @@ app.config['SECRET_KEY'] = 'mysecrethifi'  # Used for session security
 # # Initialize the database
 # db = SQLAlchemy(app)
 
-print('Hello')
 
 # # Define the User model(defined user table with columns)
 # class User(db.Model):
@@ -24,17 +27,84 @@ print('Hello')
 #     def __repr__(self):
 #         return f"User('{self.username}','{self.email}')"
 
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'hifidelivery213@gmail.com'  # Replace with your email
+app.config['MAIL_PASSWORD'] = 'oiya zlhv irvc yowz'  # Replace with your app-specific password
+
+mail = Mail(app)
+# Store OTPs in memory (can be changed to a database in production)
+otp_store = {}
+
+# Send OTP to the email
+def send_otp(email, otp):
+    try:
+        msg = Message('Your OTP Code', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg.body = f"Your OTP code is {otp}. It will expire in 10 minutes."
+        mail.send(msg)
+        print(f"OTP sent to {email}")
+    except Exception as e:
+        print(f"Error sending OTP: {e}")
+        return False
+    return True
+
 @app.route('/') 
 def start():
     return render_template('homepage.html')
+
+@app.route('/send_otp', methods=['POST'])
+def send_otp_route():
+    data = request.get_json()
+    email = data.get('email')
+
+    if not email or not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+        return jsonify({'success': False, 'message': 'Invalid email format.'})
+
+    otp = str(random.randint(100000, 999999))
+    otp_store[email] = {'otp': otp, 'timestamp': time.time()}  # Store OTP with timestamp
+
+    if send_otp(email, otp):
+        return jsonify({'success': True, 'message': 'OTP sent to email.'})
+    else:
+        return jsonify({'success': False, 'message': 'Error sending OTP.'})
+
 
 @app.route('/login')
 def login():
     return render_template('login.html')
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    if request.method == 'POST':
+        email = request.form['email']
+        otp_input = request.form['otp']
+
+        # Verify OTP
+        stored_otp = otp_store.get(email, {}).get('otp')
+        timestamp = otp_store.get(email, {}).get('timestamp', 0)
+
+        if not stored_otp:
+            flash('OTP not generated or expired. Please request a new OTP.', 'danger')
+            return redirect(url_for('register'))
+
+        # Check if OTP is valid and not expired (expires after 10 minutes)
+        if otp_input == stored_otp:
+            elapsed_time = time.time() - timestamp
+            if elapsed_time > 600:
+                flash('OTP has expired. Please request a new one.', 'danger')
+                del otp_store[email]
+                return redirect(url_for('register'))
+            
+            flash('OTP verified successfully! You are now registered.', 'success')
+            del otp_store[email]  # Clear OTP after successful registration
+            return redirect(url_for('index'))  # Redirect to the home page after successful registration
+        else:
+            flash('Invalid OTP. Please try again.', 'danger')
+            return redirect(url_for('register'))  # Redirect back to registration page if OTP is incorrect
+
+    return render_template('register.html')  # Ensure register.html is your registration page
 
 @app.route('/info')
 def info():

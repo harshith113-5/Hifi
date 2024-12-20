@@ -3,33 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Delivery Register</title>
-    <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">
+    <title>Register Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://wallpapercave.com/wp/wp5172216.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #444;
+        }
+
+        .container {
+            background: rgba(235, 211, 211, 0.9); /* Semi-transparent background */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333333;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 8px 0 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #555555;
+        }
+
+        input {
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 91, 187, 0.2);
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 1rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+        .otp{
+            background-color: #5b1d1d;
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        a {
+            font-size: 0.9rem;
+            color: #03181d;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            input, button {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .links {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            a {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="form-box">
-            <div class="button-box">
-                <a class="dash-back" href="{{ url_for('start') }}"><div id="btn"></div>
-                <div id="btn"></div>
-                <h5>HiFi Food Delivery</h5>
-                </a>
-            </div>
-            <form id="registerForm" class="input-group register-form" action="{{ url_for('verify_data') }}" method="POST">
-                <input type="text" class="input-field" id="registerUsername" placeholder="Username" name="username" required>
-                <input type="password" class="input-field" id="registerPassword" placeholder="Password" name="password" required>
-                <input type="password" class="input-field" id="registerconfirmPassword" placeholder="Confirm-Password" name="confirm-password" required>
-                <input type="email" class="input-field" id="registerEmail" placeholder="Email" name="email" required>
-                <input type="text" class="input-field" id="registerLocation" placeholder="location" name="location">
-                <input type="number" class="input-field" id="registerContact" placeholder="Contact" name='contact' required>
-                <button type="submit" class="submit-btn">Register</button>
-            </form>
-            <p>Already Registered? <a href="{{ url_for('login') }}">Login</a></p>
-        </div>
+        <h2>Register</h2>
+        <form action="register_process.php" method="POST" onsubmit="return validateForm()">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required pattern="[A-Za-z]+" title="Username should contain only letters">
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required pattern="(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}" title="Password must contain at least 8 characters, including letters and numbers">
+
+            <label for="repassword">Re-enter Password:</label>
+            <input type="password" id="repassword" name="repassword" placeholder="Re-enter your password" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" pattern="\d{10}" title="Phone number should be 10 digits" required>
+
+            <label for="otp">OTP:</label>
+            <input type="text" id="otp" name="otp" placeholder="Enter OTP" required>
+
+            <button class="otp" type="button" onclick="sendOTP()">Send OTP</button>
+
+            <button type="submit">Register</button>
+        </form>
     </div>
+
     <script>
-        function navigateToLogin() {
-            window.location.href = "{{ url_for('login') }}";
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const repassword = document.getElementById('repassword').value;
+
+            if (password !== repassword) {
+                alert('Passwords do not match.');
+                return false;
+            }
+            return true;
+        }
+
+        function sendOTP() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email first.');
+                return;
+            }
+
+            // Send AJAX request to backend to trigger OTP generation and sending
+            fetch('/send_otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email }),  // Send email in the body
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('OTP has been sent to your email.');
+                } else {
+                    alert('Error sending OTP. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while sending OTP.');
+                console.error(error);
+            });
         }
     </script>
 </body>
