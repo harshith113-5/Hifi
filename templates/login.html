@@ -1,173 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Food Delivery Login</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-image: url('https://wallpapercave.com/wp/wp5172216.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #444;
+        /* Flash Message Styles */
+        .flash-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
         }
 
-        .container {
-            background: rgba(235, 211, 211, 0.9); /* Semi-transparent background */
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333333;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin: 8px 0 5px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #555555;
-        }
-
-        input, select {
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #cccccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: #0056b3;
-            box-shadow: 0 0 5px rgba(0, 91, 187, 0.2);
-            outline: none;
-        }
-
-        button {
-            padding: 12px;
-            font-size: 1rem;
-            background-color: #007BFF;
+        .flash-message {
+            background-color: #f44336;
+            /* Red background for error */
             color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
+        .flash-message.success {
+            background-color: #4CAF50;
+            /* Green background for success */
         }
 
-        button:active {
-            transform: translateY(0);
+        .flash-message.danger {
+            background-color: #f44336;
+            /* Red background for error */
         }
 
-        .links {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
+        .flash-message p {
+            margin: 0;
         }
 
-        a {
-            font-size: 0.9rem;
-            color: #03181d;
-            text-decoration: none;
-            transition: color 0.3s;
+        /* Hide the flash message after 3 seconds */
+        .flash-message {
+            display: block;
+            animation: fadeInOut 3s forwards;
         }
 
-        a:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
+        @keyframes fadeInOut {
+            0% {
+                opacity: 1;
             }
 
-            h2 {
-                font-size: 1.5rem;
+            80% {
+                opacity: 1;
             }
 
-            input, select, button {
-                font-size: 0.9rem;
-                padding: 10px;
-            }
-
-            .links {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-
-            a {
-                font-size: 0.85rem;
+            100% {
+                opacity: 0;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h2>Login</h2>
-        <form action="{{ url_for('verify_login_data') }}" method="POST">
-            <label for="identifier">Username, Email or Phone Number:</label>
-            <input type="text" id="identifier" name="identifier" placeholder="Enter your username, email, or phone number" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" pattern="(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}" title="Password must contain at least 8 characters, including letters and numbers" required>
-
-            <label for="repassword">Re-enter Password:</label>
-            <input type="password" id="repassword" name="repassword" placeholder="Re-enter your password" required>
-
-            <label for="type">Type:</label>
-            <select id="type" name="type" required>
-                <option value="admin">Admin</option>
-                <option value="customer">Customer</option>
-                <option value="delivery_agent">Delivery Agent</option>
-            </select>
-
-            <div class="links">
-                <a href="{{ url_for('forgot') }}"><b>Forgot Password?</b></a>
-                <a href="{{ url_for('register') }}"><b>New User? Register</b></a>
+        <div class="form-box">
+            <div class="button-box">
+                <a class="dash-back" href="{{ url_for('start') }}">
+                    <div id="btn"></div>
+                    <h5>HiFi Food Delivery</h5>
+                </a>
             </div>
 
-            <button type="submit">Login</button>
-        </form>
+            <!-- Flash Messages (Success or Error) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    <p>{{ message }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form id="loginForm" class="input-group login-form" method="POST">
+                <input type="text" class="input-field" name="username" placeholder="Username" required>
+                <input type="password" class="input-field" name="password" placeholder="Password" required>
+                <p><a href="{{ url_for('recover') }}" style="font-size: small;">Forgot Password?</a></p><br><br>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+
+            <p>New User?: <a href="{{ url_for('register') }}">Register</a></p>
+        </div>
     </div>
 
-    <!-- <script>
-        function validatePasswords() {
-            const password = document.getElementById('password').value;
-            const repassword = document.getElementById('repassword').value;
-
-            if (password !== repassword) {
-                alert('Passwords do not match.');
-                return false;
+    <!-- JavaScript for Flash Message -->
+    <script>
+        window.addEventListener('load', function () {
+            const flashMessage = document.querySelector('.flash-message');
+            if (flashMessage) {
+                setTimeout(() => {
+                    flashMessage.style.display = 'none';
+                }, 3000);  // Hide the message after 3 seconds
             }
-            return true;
-        }
-    </script> -->
+        });
+    </script>
 </body>
+
 </html>
